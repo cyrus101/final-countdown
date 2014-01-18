@@ -47,6 +47,7 @@ function updateTotals()
 		}
 		
 		//TAKE OUT THE NUMBER OF HOLIDAY DAYS STILL UNTAKEN
+		//TODO - refactor this to be in a single function
 		//Known holiday dates:
 		var hol1 = new Date("23 November 2012");
 		var hol2 = new Date("30 November 2012");
