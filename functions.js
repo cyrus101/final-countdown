@@ -1,11 +1,11 @@
-function updateTotals()
+function updateTotals(ldate)
 {
-	var minusdays, workingdays, currentday, leavingday, officedays = 0;
+	var minusdays, workingdays, currentday, leavingday, tmpdate, currentdate, leavingdate, holarr, wfharr, officedays = 0;
 	
 	//Grab today's date, set the date for leaving. note: extra formatting to remove time
-	var tmpdate = new Date();	
-	var currentdate = new Date(tmpdate.toDateString());
-	var leavingdate = new Date("24 December 2012");
+	tmpdate = new Date();	
+	currentdate = new Date(tmpdate.toDateString());
+	leavingdate = new Date(ldate); //e.g. "24 December 2012"
 			
 	//Get the day of the week - note: Sunday is 0 when using .getDay(), Saturday is 6
 	currentday = currentdate.getDay();
@@ -46,74 +46,37 @@ function updateTotals()
 			minusdays++;
 		}
 		
+        
 		//TAKE OUT THE NUMBER OF HOLIDAY DAYS STILL UNTAKEN
-		//TODO - refactor this to be in a single function
-		//Known holiday dates:
-		var hol1 = new Date("23 November 2012");
-		var hol2 = new Date("30 November 2012");
-		var hol3 = new Date("3 December 2012");
-		var hol4 = new Date("4 December 2012");
-		var hol5 = new Date("5 December 2012");
-		var hol6 = new Date("6 December 2012");
-		var hol7 = new Date("7 December 2012");
-		var hol8 = new Date("10 December 2012");
-		
-		//If these days are within the current date to leaving date band, remove a day	
-		if(checkDates(currentdate,leavingdate,hol1) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol2) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol3) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol4) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol5) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol6) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol7) == true) {
-			minusdays++;
-		}
-		if(checkDates(currentdate,leavingdate,hol8) == true) {
-			minusdays++;
-		}
+        //Known holiday dates - add in the format new Date("3 February 2014")
+        holarr = new Array();
+        
+        //For each holiday date, if it's within the current date to leaving date band, remove a working day
+        for (var i = 0; i < holarr.length; i++) {
+            console.log(holarr[i]);
+            if(checkDates(currentdate,leavingdate,holarr[i]) == true) {
+                minusdays++;
+            }
+        }
 		
 		//Final calculation of number of working days left
 		workingdays = daysleft - minusdays;
 		
-		//Calculate the number of days to be spent in  the office
-		//Known office dates:
-		var off1 = new Date("26 November 2012");
-		var off2 = new Date("27 November 2012");
-		var off3 = new Date("13 December 2012");
-		var off4 = new Date("14 December 2012");
-		var off5 = new Date("20 December 2012");
-		var off6 = new Date("21 December 2012");
-		
-		if(checkDates(currentdate,leavingdate,off1) == true) {
-			officedays++;
-		}
-		if(checkDates(currentdate,leavingdate,off2) == true) {
-			officedays++;
-		}
-		if(checkDates(currentdate,leavingdate,off3) == true) {
-			officedays++;
-		}
-		if(checkDates(currentdate,leavingdate,off4) == true) {
-			officedays++;
-		}
-		if(checkDates(currentdate,leavingdate,off5) == true) {
-			officedays++;
-		}
-		if(checkDates(currentdate,leavingdate,off6) == true) {
-			officedays++;
-		}
+        
+		//Calculate the number of days to be spent travelling in to London
+        //Known working from home dates - add in the format new Date("3 February 2014")     
+        wfharr = new Array();
+        
+        //Use this if you're starting from days in the office as standard
+        officedays = workingdays;
+        
+        //For each wfh day, it's one less on the total london count
+        for (var i = 0; i < wfharr.length; i++) {
+            console.log(holarr[i]);
+            if(checkDates(currentdate,leavingdate,wfharr[i]) == true) {
+                officedays--;
+            }
+        }
 	}
 	
 	//Date has passed - set all to 0
@@ -155,6 +118,7 @@ function checkDates(start, finish, specdate) {
 	}
 }
 
+//Start calculating
 document.addEventListener('DOMContentLoaded', function() {
-	updateTotals();
+	updateTotals("28 February 2014");
 });
